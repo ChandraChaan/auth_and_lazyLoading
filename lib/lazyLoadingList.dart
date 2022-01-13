@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -12,6 +13,8 @@ class jakes extends StatefulWidget {
 }
 
 class _jakesState extends State<jakes> {
+  AudioPlayer audioPlayer = AudioPlayer();
+  static const alarmAudioPath = "assets/audio/sec_tone.mp3";
   List<dynamic> b = [];
   bool showLoader = false;
 
@@ -33,12 +36,13 @@ class _jakesState extends State<jakes> {
   @override
   void initState() {
     callapi();
-    // _scrollController.addListener(() {
-    //   if (_scrollController.position.pixels ==
-    //       _scrollController.position.maxScrollExtent) {
-    //     _getMoreList();
-    //   }
-    // });
+    _scrollController.addListener(() {
+      // if (_scrollController.position.pixels ==
+      //     _scrollController.position.pixels) {
+      //   _getMoreList();
+      print(_scrollController.position.pixels);
+      // }
+    });
   }
 
   _getMoreList() {
@@ -50,11 +54,12 @@ class _jakesState extends State<jakes> {
     setState(() {});
   }
 
+  void paySound() async {
+    int result = await audioPlayer.play(alarmAudioPath, isLocal: true);
+  }
+
   @override
   Widget build(BuildContext context) {
-    // if( identical == b.length){
-    //   return CupertinoActivityIndicator();
-    // }
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.blueGrey,
@@ -76,123 +81,133 @@ class _jakesState extends State<jakes> {
       ),
       body: showLoader == true
           ? Center(child: CupertinoActivityIndicator())
-          : ListView.builder(
-              itemCount: b.length,
-              itemBuilder: (BuildContext ctx, int i) {
-                return Column(
-                  children: [
-                    Container(
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 7),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Icon(
-                                  Icons.book_rounded,
-                                  size: 50,
-                                ),
-                              ),
-                            ),
-                            Container(
-                              child: Expanded(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      '${b[i]['name']}',
-                                      style: TextStyle(
-                                        color: Colors.black87,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
+          : Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ListView.builder(
+                  itemCount: b.length,
+                  itemBuilder: (BuildContext ctx, int i) {
+                    return InkWell(
+                      onTap: () {
+                        paySound();
+                      },
+                      child: Column(
+                        children: [
+                          Container(
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 7),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Icon(
+                                        Icons.book_rounded,
+                                        size: 50,
                                       ),
                                     ),
-                                    Text(
-                                      '${b[i]['description']}',
-                                      textAlign: TextAlign.start,
-                                      style: TextStyle(
-                                        color: Colors.black87,
-                                        fontSize: 14,
+                                  ),
+                                  Container(
+                                    child: Expanded(
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            '${b[i]['name']}',
+                                            style: TextStyle(
+                                              color: Colors.black87,
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(
+                                            '${b[i]['description']}',
+                                            textAlign: TextAlign.start,
+                                            style: TextStyle(
+                                              color: Colors.black87,
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                          Container(
+                                              child: Row(
+                                            children: [
+                                              Icon(
+                                                Icons.aspect_ratio_rounded,
+                                                size: 20,
+                                              ),
+                                              // Icon(
+                                              //   Icons.navigate_next,
+                                              //   size: 20,
+                                              // ),
+                                              SizedBox(
+                                                width: 7,
+                                              ),
+                                              Text(
+                                                '${b[i]['language']}',
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 16),
+                                              ),
+                                              SizedBox(
+                                                width: 7,
+                                              ),
+                                              Icon(
+                                                Icons.security_sharp,
+                                              ),
+                                              SizedBox(
+                                                width: 7,
+                                              ),
+                                              Text(
+                                                '${b[i]['open_issues']}',
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 16),
+                                              ),
+                                              SizedBox(
+                                                width: 7,
+                                              ),
+                                              Icon(Icons
+                                                  .sentiment_very_satisfied_rounded),
+                                              SizedBox(
+                                                width: 7,
+                                              ),
+                                              Text(
+                                                '${b[i]['watchers']}',
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 16),
+                                              ),
+                                            ],
+                                          )),
+                                        ],
                                       ),
                                     ),
-                                    Container(
-                                        child: Row(
-                                      children: [
-                                        Icon(
-                                          Icons.aspect_ratio_rounded,
-                                          size: 20,
-                                        ),
-                                        // Icon(
-                                        //   Icons.navigate_next,
-                                        //   size: 20,
-                                        // ),
-                                        SizedBox(
-                                          width: 7,
-                                        ),
-                                        Text(
-                                          '${b[i]['language']}',
-                                          style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 16),
-                                        ),
-                                        SizedBox(
-                                          width: 7,
-                                        ),
-                                        Icon(
-                                          Icons.security_sharp,
-                                        ),
-                                        SizedBox(
-                                          width: 7,
-                                        ),
-                                        Text(
-                                          '${b[i]['open_issues']}',
-                                          style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 16),
-                                        ),
-                                        SizedBox(
-                                          width: 7,
-                                        ),
-                                        Icon(Icons
-                                            .sentiment_very_satisfied_rounded),
-                                        SizedBox(
-                                          width: 7,
-                                        ),
-                                        Text(
-                                          '${b[i]['watchers']}',
-                                          style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 16),
-                                        ),
-                                      ],
-                                    )),
-                                  ],
-                                ),
-                              ),
 
-                              // Icon(
-                              //   Icons.book_rounded,
-                              //   size: 40,
-                              // ),
+                                    // Icon(
+                                    //   Icons.book_rounded,
+                                    //   size: 40,
+                                    // ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ],
-                        ),
+                          ),
+                          Divider(
+                            color: Color(0xffdde4e3),
+                            height: 20,
+                            thickness: 2,
+                            indent: 10,
+                            endIndent: 10,
+                          ),
+                        ],
                       ),
-                    ),
-                    Divider(
-                      color: Color(0xffdde4e3),
-                      height: 20,
-                      thickness: 2,
-                      indent: 10,
-                      endIndent: 10,
-                    ),
-                  ],
-                );
-              }),
+                    );
+                  }),
+            ),
     );
   }
 }
