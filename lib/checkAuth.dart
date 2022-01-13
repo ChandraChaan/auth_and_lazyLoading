@@ -43,9 +43,12 @@ class _authCheckState extends State<authCheck> {
       body: Center(
           child: TextButton(
         onPressed: () {
-          _checkAuth();
+          verifiedUserThis == true ? Navigator.pop(context) : _checkAuth();
         },
-        child: Text('Check Auth'),
+        child: verifiedUserThis == true
+            ? Text(
+                'Authentication Done, \nThanks you, \nclick here to go back')
+            : Text('Check Auth'),
       )),
     );
   }
