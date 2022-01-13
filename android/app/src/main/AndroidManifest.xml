@@ -1,6 +1,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.jakee2.local_auth_app">
-   <application
+
+    <uses-permission android:name="android.permission.USE_FINGERPRINT"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
         android:label="local_auth_app"
         android:icon="@mipmap/ic_launcher">
         <activity
