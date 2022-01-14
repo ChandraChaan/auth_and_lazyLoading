@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:http/http.dart' as h;
 import 'dart:convert';
-
+import 'dart:math';
+import 'package:confetti/confetti.dart';
 import 'checkAuth.dart';
 
 class jakes extends StatefulWidget {
@@ -14,7 +15,8 @@ class jakes extends StatefulWidget {
 
 class _jakesState extends State<jakes> {
   AudioPlayer audioPlayer = AudioPlayer();
-  static const alarmAudioPath = "assets/audio/sec_tone.mp3";
+  ConfettiController _controllerCenter;
+  static const alarmAudioPath = "assets/audio/assets_audios_sec_tone.mp3";
   List<dynamic> b = [];
   bool showLoader = false;
 
@@ -30,6 +32,30 @@ class _jakesState extends State<jakes> {
     });
   }
 
+  Path drawStar(Size size) {
+    // Method to convert degree to radians
+    double degToRad(double deg) => deg * (pi / 180.0);
+
+    const numberOfPoints = 2;
+    final halfWidth = size.width / 2;
+    final externalRadius = halfWidth;
+    final internalRadius = halfWidth / 2.5;
+    final degreesPerStep = degToRad(360 / numberOfPoints);
+    final halfDegreesPerStep = degreesPerStep / 2;
+    final path = Path();
+    final fullAngle = degToRad(360);
+    path.moveTo(size.width, halfWidth);
+
+    for (double step = 0; step < fullAngle; step += degreesPerStep) {
+      path.lineTo(halfWidth + externalRadius * cos(step),
+          halfWidth + externalRadius * sin(step));
+      path.lineTo(halfWidth + internalRadius * cos(step + halfDegreesPerStep),
+          halfWidth + internalRadius * sin(step + halfDegreesPerStep));
+    }
+    path.close();
+    return path;
+  }
+
   ScrollController _scrollController = ScrollController();
   int _crrentMax = 10;
 
@@ -43,6 +69,14 @@ class _jakesState extends State<jakes> {
       print(_scrollController.position.pixels);
       // }
     });
+    _controllerCenter =
+        ConfettiController(duration: const Duration(seconds: 1));
+  }
+
+  @override
+  void dispose() {
+    _controllerCenter.dispose();
+    super.dispose();
   }
 
   _getMoreList() {
@@ -55,7 +89,10 @@ class _jakesState extends State<jakes> {
   }
 
   void paySound() async {
+    _controllerCenter.play();
+    print('try to playing ');
     int result = await audioPlayer.play(alarmAudioPath, isLocal: true);
+    print('done playing ');
   }
 
   @override
@@ -83,130 +120,155 @@ class _jakesState extends State<jakes> {
           ? Center(child: CupertinoActivityIndicator())
           : Padding(
               padding: const EdgeInsets.all(8.0),
-              child: ListView.builder(
-                  itemCount: b.length,
-                  itemBuilder: (BuildContext ctx, int i) {
-                    return InkWell(
-                      onTap: () {
-                        paySound();
-                      },
-                      child: Column(
-                        children: [
-                          Container(
-                            child: Padding(
-                              padding: const EdgeInsets.only(top: 7),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Icon(
-                                        Icons.book_rounded,
-                                        size: 50,
+              child: Stack(
+                children: [
+                  Align(
+                    alignment: Alignment.center,
+                    child: ConfettiWidget(
+                      confettiController: _controllerCenter,
+                      blastDirectionality: BlastDirectionality.explosive,
+                      // don't specify a direction, blast randomly
+                      shouldLoop: false,
+                      // start again as soon as the animation is finished
+                      colors: const [
+                        Colors.green,
+                        Colors.blue,
+                        Colors.pink,
+                        Colors.orange,
+                        Colors.purple
+                      ],
+                      // manually specify the colors to be used
+                      createParticlePath:
+                          drawStar, // define a custom shape/path.
+                    ),
+                  ),
+                  ListView.builder(
+                      itemCount: b.length,
+                      itemBuilder: (BuildContext ctx, int i) {
+                        return InkWell(
+                          onTap: () {
+                            paySound();
+                          },
+                          child: Column(
+                            children: [
+                              Container(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(top: 7),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Icon(
+                                            Icons.book_rounded,
+                                            size: 50,
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                  ),
-                                  Container(
-                                    child: Expanded(
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            '${b[i]['name']}',
-                                            style: TextStyle(
-                                              color: Colors.black87,
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          Text(
-                                            '${b[i]['description']}',
-                                            textAlign: TextAlign.start,
-                                            style: TextStyle(
-                                              color: Colors.black87,
-                                              fontSize: 14,
-                                            ),
-                                          ),
-                                          Container(
-                                              child: Row(
+                                      Container(
+                                        child: Expanded(
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
                                             children: [
-                                              Icon(
-                                                Icons.aspect_ratio_rounded,
-                                                size: 20,
-                                              ),
-                                              // Icon(
-                                              //   Icons.navigate_next,
-                                              //   size: 20,
-                                              // ),
-                                              SizedBox(
-                                                width: 7,
+                                              Text(
+                                                '${b[i]['name']}',
+                                                style: TextStyle(
+                                                  color: Colors.black87,
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
                                               ),
                                               Text(
-                                                '${b[i]['language']}',
+                                                '${b[i]['description']}',
+                                                textAlign: TextAlign.start,
                                                 style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 16),
+                                                  color: Colors.black87,
+                                                  fontSize: 14,
+                                                ),
                                               ),
-                                              SizedBox(
-                                                width: 7,
-                                              ),
-                                              Icon(
-                                                Icons.security_sharp,
-                                              ),
-                                              SizedBox(
-                                                width: 7,
-                                              ),
-                                              Text(
-                                                '${b[i]['open_issues']}',
-                                                style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 16),
-                                              ),
-                                              SizedBox(
-                                                width: 7,
-                                              ),
-                                              Icon(Icons
-                                                  .sentiment_very_satisfied_rounded),
-                                              SizedBox(
-                                                width: 7,
-                                              ),
-                                              Text(
-                                                '${b[i]['watchers']}',
-                                                style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 16),
-                                              ),
+                                              Container(
+                                                  child: Row(
+                                                children: [
+                                                  Icon(
+                                                    Icons.aspect_ratio_rounded,
+                                                    size: 20,
+                                                  ),
+                                                  // Icon(
+                                                  //   Icons.navigate_next,
+                                                  //   size: 20,
+                                                  // ),
+                                                  SizedBox(
+                                                    width: 7,
+                                                  ),
+                                                  Text(
+                                                    '${b[i]['language']}',
+                                                    style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 16),
+                                                  ),
+                                                  SizedBox(
+                                                    width: 7,
+                                                  ),
+                                                  Icon(
+                                                    Icons.security_sharp,
+                                                  ),
+                                                  SizedBox(
+                                                    width: 7,
+                                                  ),
+                                                  Text(
+                                                    '${b[i]['open_issues']}',
+                                                    style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 16),
+                                                  ),
+                                                  SizedBox(
+                                                    width: 7,
+                                                  ),
+                                                  Icon(Icons
+                                                      .sentiment_very_satisfied_rounded),
+                                                  SizedBox(
+                                                    width: 7,
+                                                  ),
+                                                  Text(
+                                                    '${b[i]['watchers']}',
+                                                    style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 16),
+                                                  ),
+                                                ],
+                                              )),
                                             ],
-                                          )),
-                                        ],
-                                      ),
-                                    ),
+                                          ),
+                                        ),
 
-                                    // Icon(
-                                    //   Icons.book_rounded,
-                                    //   size: 40,
-                                    // ),
+                                        // Icon(
+                                        //   Icons.book_rounded,
+                                        //   size: 40,
+                                        // ),
+                                      ),
+                                    ],
                                   ),
-                                ],
+                                ),
                               ),
-                            ),
+                              Divider(
+                                color: Color(0xffdde4e3),
+                                height: 20,
+                                thickness: 2,
+                                indent: 10,
+                                endIndent: 10,
+                              ),
+                            ],
                           ),
-                          Divider(
-                            color: Color(0xffdde4e3),
-                            height: 20,
-                            thickness: 2,
-                            indent: 10,
-                            endIndent: 10,
-                          ),
-                        ],
-                      ),
-                    );
-                  }),
+                        );
+                      })
+                ],
+              ),
             ),
     );
   }

@@ -37,6 +37,7 @@ dependencies:
   local_auth:
   http:
   audioplayers: ^0.20.1
+  confetti:
 
 dev_dependencies:
   flutter_test:

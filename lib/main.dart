@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'blastAnimation.dart';
 import 'checkAuth.dart';
 import 'lazyLoadingList.dart';
 
