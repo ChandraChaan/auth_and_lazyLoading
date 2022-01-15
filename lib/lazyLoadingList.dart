@@ -1,12 +1,15 @@
-import 'package:audioplayers/audioplayers.dart';
+// import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:http/http.dart' as h;
+import 'package:local_auth_app/navigation.dart';
 import 'dart:convert';
 import 'dart:math';
-import 'package:confetti/confetti.dart';
+
+// import 'package:confetti/confetti.dart';
 import 'checkAuth.dart';
+// import 'navigator.dart';
 
 class jakes extends StatefulWidget {
   @override
@@ -14,8 +17,8 @@ class jakes extends StatefulWidget {
 }
 
 class _jakesState extends State<jakes> {
-  AudioPlayer audioPlayer = AudioPlayer();
-  ConfettiController _controllerCenter;
+  // AudioPlayer audioPlayer = AudioPlayer();
+  // ConfettiController _controllerCenter;
   static const alarmAudioPath = "assets/audio/assets_audios_sec_tone.mp3";
   List<dynamic> b = [];
   bool showLoader = false;
@@ -69,13 +72,13 @@ class _jakesState extends State<jakes> {
       print(_scrollController.position.pixels);
       // }
     });
-    _controllerCenter =
-        ConfettiController(duration: const Duration(seconds: 1));
+    // _controllerCenter =
+    //     ConfettiController(duration: const Duration(seconds: 1));
   }
 
   @override
   void dispose() {
-    _controllerCenter.dispose();
+    // _controllerCenter.dispose();
     super.dispose();
   }
 
@@ -89,9 +92,9 @@ class _jakesState extends State<jakes> {
   }
 
   void paySound() async {
-    _controllerCenter.play();
+    // _controllerCenter.play();
     print('try to playing ');
-    int result = await audioPlayer.play(alarmAudioPath, isLocal: true);
+    // int result = await audioPlayer.play(alarmAudioPath, isLocal: true);
     print('done playing ');
   }
 
@@ -122,32 +125,38 @@ class _jakesState extends State<jakes> {
               padding: const EdgeInsets.all(8.0),
               child: Stack(
                 children: [
-                  Align(
-                    alignment: Alignment.center,
-                    child: ConfettiWidget(
-                      confettiController: _controllerCenter,
-                      blastDirectionality: BlastDirectionality.explosive,
-                      // don't specify a direction, blast randomly
-                      shouldLoop: false,
-                      // start again as soon as the animation is finished
-                      colors: const [
-                        Colors.green,
-                        Colors.blue,
-                        Colors.pink,
-                        Colors.orange,
-                        Colors.purple
-                      ],
-                      // manually specify the colors to be used
-                      createParticlePath:
-                          drawStar, // define a custom shape/path.
-                    ),
-                  ),
+                  // Align(
+                  //   alignment: Alignment.center,
+                  //   child: ConfettiWidget(
+                  //     confettiController: _controllerCenter,
+                  //     blastDirectionality: BlastDirectionality.explosive,
+                  //     // don't specify a direction, blast randomly
+                  //     shouldLoop: false,
+                  //     // start again as soon as the animation is finished
+                  //     colors: const [
+                  //       Colors.green,
+                  //       Colors.blue,
+                  //       Colors.pink,
+                  //       Colors.orange,
+                  //       Colors.purple
+                  //     ],
+                  //     // manually specify the colors to be used
+                  //     createParticlePath:
+                  //         drawStar, // define a custom shape/path.
+                  //   ),
+                  // ),
                   ListView.builder(
                       itemCount: b.length,
                       itemBuilder: (BuildContext ctx, int i) {
                         return InkWell(
                           onTap: () {
-                            paySound();
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => detailedpage(
+                                      title: '${b[i]['name']}',
+                                      subtitle: '${b[i]['description']}',
+                                    )));
+
+                            // paySound();
                           },
                           child: Column(
                             children: [
