@@ -12,6 +12,7 @@ class authCheck extends StatefulWidget {
 class _authCheckState extends State<authCheck> {
   bool _hasBioSensor = false;
   bool verifiedUserThis = false;
+  String mainText = 'Check Auth';
   LocalAuthentication localAuth = LocalAuthentication();
 
   @override
@@ -25,6 +26,10 @@ class _authCheckState extends State<authCheck> {
       setState(() {});
       if (_hasBioSensor == true) {
         _getAuth();
+      } else {
+        setState(() {
+          mainText = 'you don\'t have Screen lock you can skip this. \nclick here to go next';
+        });
       }
     } on PlatformException catch (e) {
       print(e);
@@ -38,7 +43,7 @@ class _authCheckState extends State<authCheck> {
           localizedReason: 'i need to confirm you', stickyAuth: true);
       print(confirmAuth);
       verifiedUserThis = confirmAuth;
-      if(confirmAuth == true)
+      if (confirmAuth == true)
         Navigator.of(context)
             .pushReplacement(MaterialPageRoute(builder: (context) => jakes()));
       setState(() {});
@@ -53,11 +58,14 @@ class _authCheckState extends State<authCheck> {
       body: Center(
           child: TextButton(
         onPressed: () {
-          verifiedUserThis == true ? Navigator.pop(context) : _checkAuth();
+          verifiedUserThis == true
+              ? (Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (context) => jakes())))
+              : _checkAuth();
         },
         child: verifiedUserThis == true
             ? Text('Authentication Done, \nThanks you, \nclick here to go back')
-            : Text('Check Auth'),
+            : Text(mainText),
       )),
     );
   }
