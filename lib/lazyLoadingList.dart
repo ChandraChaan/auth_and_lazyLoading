@@ -5,6 +5,8 @@ import 'package:http/http.dart' as h;
 import 'package:local_auth_app/navigation.dart';
 import 'dart:convert';
 
+import 'blastAnimation.dart';
+
 class jakes extends StatefulWidget {
   @override
   _jakesState createState() => _jakesState();
@@ -26,16 +28,20 @@ class _jakesState extends State<jakes> {
     setState(() {
       apiData = jsonDecode(a.body);
       showLoader = false;
-      if (8 < apiData.length) {
-        for (int a = 0; a < 8; a++) {
+    });
+    if (8 < apiData.length) {
+      for (int a = 0; a < 8; a++) {
+        setState(() {
           realData.add(apiData[a]);
           _crrentMax = a;
-        }
-      } else {
+        });
+      }
+    } else {
+      setState(() {
         realData.addAll(apiData);
         _crrentMax = apiData.length;
-      }
-    });
+      });
+    }
   }
 
   @override
@@ -52,18 +58,22 @@ class _jakesState extends State<jakes> {
   _getMoreList() {
     print("Get MOre List");
     if (realData.length < apiData.length) {
-      if (_crrentMax + 5 < apiData.length) {
-        for (int a = _crrentMax; a < _crrentMax + 5; a++) {
-          realData.add(apiData[a]);
-          _crrentMax = a;
+      Future.delayed(const Duration(milliseconds: 1500), () {
+        if (_crrentMax + 2 < apiData.length) {
+          for (int a = _crrentMax; a < _crrentMax + 2; a++) {
+            setState(() {
+              realData.add(apiData[a]);
+              _crrentMax = a;
+            });
+          }
+        } else {
+          realData.clear();
+          setState(() {
+            realData.addAll(apiData);
+            _crrentMax = apiData.length;
+          });
         }
-        setState(() {});
-      } else {
-        realData.clear();
-        realData.addAll(apiData);
-        _crrentMax = apiData.length;
-        setState(() {});
-      }
+      });
     }
     setState(() {});
   }
@@ -109,11 +119,11 @@ class _jakesState extends State<jakes> {
                     } else {
                       return InkWell(
                         onTap: () {
-                          // Navigator.of(context).push(MaterialPageRoute(
-                          //     builder: (context) => detailedpage(
-                          //           title: '${realData[i]['name']}',
-                          //           subtitle: '${realData[i]['description']}',
-                          //         )));
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => BlastAnimati(
+                                    title: '${realData[i]['name']}',
+                                    subtitle: '${realData[i]['description']}',
+                                  )));
 
                           // paySound();
                         },

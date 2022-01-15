@@ -3,8 +3,13 @@ import 'dart:math';
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 
-
 class BlastAnimati extends StatefulWidget {
+  final String title;
+
+  final String subtitle;
+
+  BlastAnimati({this.title, this.subtitle});
+
   @override
   _BlastAnimatiState createState() => _BlastAnimatiState();
 }
@@ -17,6 +22,7 @@ class _BlastAnimatiState extends State<BlastAnimati> {
     super.initState();
     _controllerCenter =
         ConfettiController(duration: const Duration(seconds: 1));
+    _controllerCenter.play();
   }
 
   @override
@@ -52,38 +58,66 @@ class _BlastAnimatiState extends State<BlastAnimati> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Stack(
-        children: <Widget>[
-          //CENTER -- Blast
-          Align(
-            alignment: Alignment.center,
-            child: ConfettiWidget(
-              confettiController: _controllerCenter,
-              blastDirectionality: BlastDirectionality
-                  .explosive, // don't specify a direction, blast randomly
-              shouldLoop:
-              false, // start again as soon as the animation is finished
-              colors: const [
-                Colors.green,
-                Colors.blue,
-                Colors.pink,
-                Colors.orange,
-                Colors.purple
-              ], // manually specify the colors to be used
-              createParticlePath: drawStar, // define a custom shape/path.
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.blueGrey,
+        title: Text(
+          "jake's Git",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+          ),
+        ),
+      ),
+      body: SafeArea(
+        child: Stack(
+          children: <Widget>[
+            //CENTER -- Blast
+            Align(
+              alignment: Alignment.center,
+              child: ConfettiWidget(
+                confettiController: _controllerCenter,
+                blastDirectionality: BlastDirectionality.explosive,
+                // don't specify a direction, blast randomly
+                shouldLoop: false,
+                // start again as soon as the animation is finished
+                colors: const [
+                  Colors.green,
+                  Colors.blue,
+                  Colors.pink,
+                  Colors.orange,
+                  Colors.purple
+                ],
+                // manually specify the colors to be used
+                createParticlePath: drawStar, // define a custom shape/path.
+              ),
             ),
-          ),
-          Align(
-            alignment: Alignment.center,
-            child: TextButton(
-                onPressed: () {
-                  _controllerCenter.play();
-                },
-                child: _display('blast\nstars')),
-          ),
-
-        ],
+            Align(
+              alignment: Alignment.center,
+              child: Padding(
+                padding: const EdgeInsets.all(18.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.title,
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    ),
+                    SizedBox(
+                      height: 25,
+                    ),
+                    Text(
+                      widget.subtitle,
+                      textAlign: TextAlign.start,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
